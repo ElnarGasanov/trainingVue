@@ -3,41 +3,54 @@
 <template>
   <!--ЗДЕСЬ МЫ ПИШЕМ РАЗМЕТКУ-->
   <main class="app">
-    <form>
-      <h4>Создание поста</h4>
-      <input class="input" type="text" placeholder="Название">
-      <input class="input" type="text" placeholder="Описание">
-      <button class="btn" @click="createPost">Создать пост</button>
-    </form>
-    <div class="post" v-for="post in posts">
-      <div><strong>Название:</strong>{{ post.title }}</div>
-      <div><strong>Описание:</strong>{{ post.body }}</div>
-    </div>
+    <h1>Страница с постами</h1>
+    <my-button style="margin-top: 10px; margin-bottom: 20px" @click="showDialog">Добавить пост</my-button>
+    <my-dialog v-model:show="dialogVisible">
+      <post-form @create="createPost"/>
+    </my-dialog>
+
+    <post-list @remove="removePost"
+        :posts="posts"/>
   </main>
 </template>
 
 <script>
 //ЗДЕСЬ описываем логику, создаём функции, объявляем данные
 //важный момент в этой секции по default мы должны экспортировать объект{}
+import PostForm from "@/components/PostForm";
+import PostList from "@/components/PostList";
+
 export default {
+  components:{
+    PostForm, PostList,
+  },
   data() {
     return {
       posts: [
         {id: 1, title: "JavaScript 1", body: "Описание поста 1"},
         {id: 2, title: "JavaScript 2", body: "Описание поста 2"},
-        {id: 3, title: "JavaScript 3", body: "Описание поста 3"},
+        {id: 3, title: "JavaScript 3", body: "Jписание поста 3"},
       ],
+      dialogVisible: false,
     }
   },
   methods: {
-    createPost:{
-
+    createPost(post) {
+      this.posts.push(post);
+      this.dialogVisible = false;
+    },
+    removePost(post){
+      this.posts = this.posts.filter(p => p.id !== post.id);
+    },
+    showDialog(){
+      this.dialogVisible = true;
     }
   }
 }
 </script>
 
 <style scoped>
+/*ЗДЕСЬ ПРОПИСЫВАТЬ СТИЛИ*/
 * {
   margin: 0;
   padding: 0;
@@ -46,32 +59,5 @@ export default {
 
 .app{
   padding: 20px;
-}
-
-.post {
-  margin-top: 15px;
-  padding: 15px;
-  border: 2px solid teal;
-}
-
-form{
-  display: flex;
-  flex-direction: column;
-}
-
-.input{
-  width: 100%;
-  border: 1px solid teal;
-  padding: 10px 15px;
-  margin-top: 15px;
-}
-.btn{
-  align-self: flex-end;
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: none;
-  color: teal;
-  border: 1px solid teal;
-  cursor: pointer;
 }
 </style>
